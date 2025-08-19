@@ -6,8 +6,13 @@ import os
 from pathlib import Path
 import uuid
 
-from rag import enhance_prompt
-from client import video_generator
+try:
+    from .rag import enhance_prompt
+    from .client import video_generator
+except ImportError:
+    from rag import enhance_prompt
+    from client import video_generator
+
 
 app = FastAPI(title="AI Video Generator")
 
