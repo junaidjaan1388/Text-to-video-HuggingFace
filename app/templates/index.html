@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Generator</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Video Generator</h1>
+        
+        <form id="videoForm">
+            <div class="form-group">
+                <label for="prompt">Video Prompt:</label>
+                <textarea id="prompt" name="prompt" required placeholder="Describe the video you want to generate..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="style">Style:</label>
+                <select id="style" name="style">
+                    <option value="realistic">Realistic</option>
+                    <option value="anime">Anime</option>
+                    <option value="painting">Painting</option>
+                    <option value="cyberpunk">Cyberpunk</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="lighting">Lighting:</label>
+                <select id="lighting" name="lighting">
+                    <option value="natural">Natural</option>
+                    <option value="soft">Soft</option>
+                    <option value="dramatic">Dramatic</option>
+                    <option value="studio">Studio</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="aspect_ratio">Aspect Ratio:</label>
+                <select id="aspect_ratio" name="aspect_ratio">
+                    <option value="16:9">16:9 (Widescreen)</option>
+                    <option value="9:16">9:16 (Vertical)</option>
+                    <option value="1:1">1:1 (Square)</option>
+                    <option value="4:3">4:3 (Standard)</option>
+                </select>
+            </div>
+            
+            <button type="submit">Generate Video</button>
+        </form>
+        
+        <div id="loading" class="hidden">
+            <p>Generating your video... This may take a few moments.</p>
+            <div class="spinner"></div>
+        </div>
+        
+        <div id="result" class="hidden">
+            <h2>Your Generated Video</h2>
+            <video id="generatedVideo" controls>
+                <source id="videoSource" src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div id="enhancedPrompt"></div>
+        </div>
+    </div>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>
