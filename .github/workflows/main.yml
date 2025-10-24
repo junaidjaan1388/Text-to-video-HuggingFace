@@ -1,16 +1,15 @@
-name: Deploy FastAPI Video Generator
+name: Run LTX Video App
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  deploy:
+  run-app:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Set up Python
@@ -18,108 +17,14 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install dependencies
+    - name: Install system dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y ffmpeg
-        pip install fastapi uvicorn jinja2 python-multipart
-        pip install torch transformers huggingface-hub
-        # Add your specific dependencies here
 
-    - name: Create required directories
+    - name: Clone and run LTX Video
       run: |
-        mkdir -p app/static app/templates app/videos
-
-    - name: Create basic template files (if missing)
-      run: |
-        # Create a basic index.html if it doesn't exist
-        if [ ! -f "app/templates/index.html" ]; then
-          mkdir -p app/templates
-          cat > app/templates/index.html << 'EOF'
-<!DOCTYPE html>
-<html>
-<head>
-    <title>AI Video Generator</title>
-</head>
-<body>
-    <h1>AI Video Generator</h1>
-    <form action="/generate" method="post">
-        <input type="text" name="prompt" placeholder="Enter your prompt" required>
-        <button type="submit">Generate Video</button>
-    </form>
-</body>
-</html>
-EOF
-        fi
-
-        if [ ! -f "app/templates/player.html" ]; then
-          cat > app/templates/player.html << 'EOF'
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Video Player</title>
-</head>
-<body>
-    <h1>Your Generated Video</h1>
-    <video controls width="640">
-        <source src="{{ video_url }}" type="video/mp4">
-    </video>
-</body>
-</html>
-EOF
-        fi
-
-    - name: Create placeholder modules (if missing)
-      run: |
-        # Create placeholder rag.py if it doesn't exist
-        if [ ! -f "rag.py" ]; then
-          cat > rag.py << 'EOF'
-def enhance_prompt(prompt, style, lighting, aspect_ratio):
-    return f\"{prompt} in {style} style with {lighting} lighting, aspect ratio: {aspect_ratio}\"
-EOF
-        fi
-
-        # Create placeholder client.py if it doesn't exist
-        if [ ! -f "client.py" ]; then
-          cat > client.py << 'EOF'
-import uuid
-from pathlib import Path
-
-class VideoGenerator:
-    def generate_video(self, prompt):
-        # Placeholder - in real implementation, this would call HuggingFace API
-        print(f\"Generating video for: {prompt}\")
-        video_filename = f\"{uuid.uuid4()}.mp4\"
-        video_path = Path(\"app/videos\") / video_filename
-        
-        # Create a dummy video file for testing
-        with open(video_path, 'w') as f:
-            f.write(\"dummy video content\")
-        
-        return video_filename
-
-video_generator = VideoGenerator()
-EOF
-        fi
-
-    - name: Test the FastAPI server
-      run: |
-        # Start the server in background
-        python app.py &
-        SERVER_PID=$!
-        
-        # Wait for server to start
-        sleep 5
-        
-        # Test if server is running
-        if curl -f http://localhost:8000/ > /dev/null 2>&1; then
-          echo "✓ FastAPI server is running successfully"
-          # Test API endpoints
-          curl http://localhost:8000/ | head -n 5
-        else
-          echo "✗ FastAPI server failed to start"
-          exit 1
-        fi
-        
-        # Stop the server
-        kill $SERVER_PID
+        git clone https://huggingface.co/spaces/Jaan22/ltx-video-distilled
+        cd ltx-video-distilled
+        pip install -r requirements.txt
+        python app.py
